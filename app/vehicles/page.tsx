@@ -6,26 +6,29 @@ import { useApp } from '@/lib/context/app-context';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Filter, LogIn, LogOut, Archive, AlertCircle, Car } from 'lucide-react';
+import { Plus, Search, AlertCircle, RefreshCw } from 'lucide-react';
 import { Vehicle } from '@/lib/types';
 import Link from 'next/link';
-import Image from 'next/image';
+import { UltraCarSvg } from '@/components/shared/ultra-car-svg';
 
 export default function VehiclesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { currentUser, store, currentFacility } = useApp();
+  const { currentUser, store, currentFacility, refreshVehicles } = useApp();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'in_storage' | 'checked_out' | 'archived'>('all');
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('/');
+      router.push('/login');
       return;
     }
 
-    let filtered = store.vehicles.filter(v => v.facilityId === currentFacility);
+    // Show all vehicles — facilityId filtering is best-effort only since
+    // cars loaded from /cars/me may have a different or missing facility_id.
+    let filtered = store.vehicles;
 
     if (statusFilter !== 'all') {
       filtered = filtered.filter(v => v.status === statusFilter);
@@ -80,12 +83,27 @@ export default function VehiclesPage() {
         <div className="px-4 py-4 space-y-3">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Vehicles</h1>
-            <Link href="/vehicles/register">
-              <Button size="sm" className="btn-gold rounded-xl h-9 px-4">
-                <Plus className="w-4 h-4 mr-1.5" />
-                Add
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-xl h-9 px-3"
+                onClick={async () => {
+                  setRefreshing(true);
+                  await refreshVehicles();
+                  setRefreshing(false);
+                }}
+                disabled={refreshing}
+              >
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               </Button>
-            </Link>
+              <Link href="/vehicles/register">
+                <Button size="sm" className="btn-gold rounded-xl h-9 px-4">
+                  <Plus className="w-4 h-4 mr-1.5" />
+                  Add
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Search */}
@@ -122,12 +140,12 @@ export default function VehiclesPage() {
       <div className="p-4 space-y-3 max-w-2xl mx-auto">
         {vehicles.length === 0 ? (
           <div className="card-premium relative overflow-hidden p-12 text-center animate-fade-in">
-            <div className="absolute inset-0 opacity-[0.04]">
-              <Image src="/empty-garage.png" alt="Empty Garage" fill className="object-cover" />
+            <div className="absolute inset-0 pointer-events-none flex items-end justify-center overflow-hidden">
+              <UltraCarSvg variant="in" opacity={0.09} className="w-full max-w-lg" />
             </div>
             <div className="relative z-10 flex flex-col items-center">
               <div className="w-16 h-16 rounded-full bg-muted/80 backdrop-blur-sm mx-auto mb-4 flex items-center justify-center border border-border/50 shadow-inner">
-                <Car className="w-8 h-8 text-muted-foreground/40" />
+                <Plus className="w-8 h-8 text-muted-foreground/40" />
               </div>
               <p className="text-foreground/90 font-medium text-lg">No vehicles found</p>
               <p className="text-sm text-muted-foreground/70 mt-1">Try adjusting your search or filters</p>
@@ -166,14 +184,14 @@ export default function VehiclesPage() {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="relative w-full h-full bg-[#111] flex items-center justify-center">
-                      <Image 
-                        src="/vehicle-placeholder.png" 
-                        alt="Vehicle Placeholder" 
-                        fill 
-                        className="object-cover opacity-70 mix-blend-screen transition-transform duration-700 group-hover:scale-105" 
+                    <div className="relative w-full h-full bg-[#0d0d0d] flex items-center justify-center overflow-hidden">
+                      {/* Ultra-detailed SVG car — cinematic placeholder */}
+                      <UltraCarSvg
+                        variant={vehicle.status === 'in_storage' ? 'in' : 'out'}
+                        opacity={0.55}
+                        className="absolute inset-0 w-full h-full scale-110 transition-transform duration-700 group-hover:scale-125"
                       />
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background/80 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
                     </div>
                   )}
                   

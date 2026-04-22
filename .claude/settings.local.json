@@ -12,7 +12,14 @@
       "Bash(curl:*)",
       "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\)\\); const paths=Object.entries\\(d.paths||{}\\).filter\\(\\([k]\\)=>k.includes\\('aicard'\\)\\); console.log\\(JSON.stringify\\(Object.fromEntries\\(paths\\),null,2\\)\\)\")",
       "Bash(node -e \"const d=require\\('C:/Users/coben/AppData/Local/Temp/openapi.json'\\); const paths=Object.entries\\(d.paths||{}\\).filter\\(\\([k]\\)=>k.toLowerCase\\(\\).includes\\('aicard'\\)\\); console.log\\(JSON.stringify\\(Object.fromEntries\\(paths\\),null,2\\)\\)\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cp -r /c/Users/coben/OneDrive/Desktop/Garage/version1Sof/app/. /c/Users/coben/OneDrive/Desktop/Garage/version2Sof/app/)",
+      "Bash(cp -r /c/Users/coben/OneDrive/Desktop/Garage/version1Sof/components/. /c/Users/coben/OneDrive/Desktop/Garage/version2Sof/components/)",
+      "Bash(cp -r /c/Users/coben/OneDrive/Desktop/Garage/version1Sof/lib/. /c/Users/coben/OneDrive/Desktop/Garage/version2Sof/lib/)",
+      "Bash(cp -r /c/Users/coben/OneDrive/Desktop/Garage/version1Sof/public/. /c/Users/coben/OneDrive/Desktop/Garage/version2Sof/public/)",
+      "Bash(cp /c/Users/coben/OneDrive/Desktop/Garage/version1Sof/tailwind.config.ts /c/Users/coben/OneDrive/Desktop/Garage/version2Sof/tailwind.config.ts)",
+      "Bash([ -d \"$V1/.github\" ])",
+      "Bash(cp -r /c/Users/coben/OneDrive/Desktop/Garage/version1Sof/.github /c/Users/coben/OneDrive/Desktop/Garage/version2Sof/.github)"
     ]
   }
 }
